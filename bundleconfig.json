@@ -1,0 +1,16 @@
+[{
+    "inputFiles": [
+        "module/module.js",
+        "module/configs/configs.js",
+        "module/controllers/controllers.js",
+        "module/directives/directives.js",
+        "module/filters/filters.js",
+        "module/models/models.js",
+        "module/services/services.js",
+        "module/templates/templates.js"
+    ],
+    "outputFileName": "docs/js/app.js",
+    "minify": {
+        "enabled": true
+    }
+}]

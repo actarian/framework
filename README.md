@@ -1,2 +1,10 @@
 # framework
-default framework angular.js
+Framework 
+
+[demo](https://actarian.github.io/framework/)
+
+> npm install
+
+> bower install
+
+> gulp
