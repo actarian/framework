@@ -1,7 +1,7 @@
 //HEAD 
 (function(app) {
-try { app = angular.module("repotable"); }
-catch(err) { app = angular.module("repotable", []); }
+try { app = angular.module("framework"); }
+catch(err) { app = angular.module("framework", []); }
 app.run(["$templateCache", function($templateCache) {
 "use strict";
 

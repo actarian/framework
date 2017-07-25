@@ -1,18 +1,18 @@
 [{
     "inputFiles": [
-        "source/framework.module.js",
-        "source/events/events.factory.js",
-        "source/extensions/ngclick.directive.js",
-        "source/filters/filters.js",
-        "source/forms/control.directive.js",
-        "source/forms/validate.directive.js",
-        "source/hash/hash.model.js",
-        "source/header/header.directive.js",
-        "source/router/router.service.js",
-        "source/state/state.model.js",
-        "source/storage/storage.service.js",
-        "source/services/services.js",
-        "source/utils/utils.service.js"
+        "module/framework.module.js",
+        "module/events/events.factory.js",
+        "module/extensions/ngclick.directive.js",
+        "module/filters/filters.js",
+        "module/forms/control.directive.js",
+        "module/forms/validate.directive.js",
+        "module/hash/hash.model.js",
+        "module/header/header.directive.js",
+        "module/router/router.service.js",
+        "module/state/state.model.js",
+        "module/storage/storage.service.js",
+        "module/services/services.js",
+        "module/utils/utils.service.js"
     ],
     "outputFileName": "dist/framework.js",
     "minify": {
