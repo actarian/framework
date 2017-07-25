@@ -1,15 +1,20 @@
 [{
     "inputFiles": [
-        "module/module.js",
-        "module/configs/configs.js",
-        "module/controllers/controllers.js",
-        "module/directives/directives.js",
-        "module/filters/filters.js",
-        "module/models/models.js",
-        "module/services/services.js",
-        "module/templates/templates.js"
+        "source/framework.module.js",
+        "source/events/events.factory.js",
+        "source/extensions/ngclick.directive.js",
+        "source/filters/filters.js",
+        "source/forms/control.directive.js",
+        "source/forms/validate.directive.js",
+        "source/hash/hash.model.js",
+        "source/header/header.directive.js",
+        "source/router/router.service.js",
+        "source/state/state.model.js",
+        "source/storage/storage.service.js",
+        "source/services/services.js",
+        "source/utils/utils.service.js"
     ],
-    "outputFileName": "docs/js/app.js",
+    "outputFileName": "dist/framework.js",
     "minify": {
         "enabled": true
     }
