@@ -1,6 +1,6 @@
 /* global angular */
 
-var module = angular.module('framework', ['ng', 'ngSanitize', 'ngMessages']);
+var module = angular.module('framework', ['ng', 'ngMessages']);
 /* global angular */
 
 (function() {
@@ -355,7 +355,7 @@ var module = angular.module('framework', ['ng', 'ngSanitize', 'ngMessages']);
     app.directive('controlMessages', [function() {
         return {
             restrict: 'E',
-            templateUrl: 'partials/control-messages',
+            templateUrl: 'partials/framework/forms/messages',
             transclude: {
                 'message': '?messageItems',
             },
@@ -363,7 +363,7 @@ var module = angular.module('framework', ['ng', 'ngSanitize', 'ngMessages']);
         };
     }]);
 
-    app.directive('control', ['$http', '$templateCache', '$compile', '$parse', function($http, $templateCache, $compile, $parse) {
+    app.directive('control', ['$parse', function($parse) {
         function formatLabel(string, prepend, expression) {
             string = string || '';
             prepend = prepend || '';
@@ -390,10 +390,125 @@ var module = angular.module('framework', ['ng', 'ngSanitize', 'ngMessages']);
         return {
             restrict: 'A',
             templateUrl: function(element, attributes) {
-                var template = 'partials/forms/control';
+                var template = 'partials/framework/forms/text';
                 switch (attributes.control) {
                     case 'select':
-                        template = 'partials/forms/control-select';
+                        template = 'partials/framework/forms/select';
+                        break;
+                }
+                return template;
+            },
+            scope: {
+                ngModel: '=',
+                required: '=',
+                form: '@',
+                title: '@',
+                placeholder: '@',
+                source: '=?',
+                key: '@?',
+                label: '@?',
+            },
+            require: 'ngModel',
+            transclude: true,
+            link: {
+                pre: function preLink(scope, element, attributes, controller, transclude) {
+                    var label = scope.label = (scope.label ? scope.label : 'name');
+                    var key = scope.key = (scope.key ? scope.key : 'id');
+                    if (attributes.control === 'select') {
+                        var filter = (attributes.filter ? '| ' + attributes.filter : '');
+                        var optionLabel = formatLabel(label, 'item.', true);
+                        scope.getOptions = function() {
+                            return attributes.number ?
+                                'item.' + key + ' as ' + optionLabel + ' disable when item.disabled for item in source ' + filter :
+                                optionLabel + ' disable when item.disabled for item in source ' + filter + ' track by item.' + key;
+                        };
+                    }
+                    var type = scope.type = attributes.control;
+                    var form = scope.form = scope.form || 'form';
+                    var title = scope.title = scope.title || 'untitled';
+                    var placeholder = scope.placeholder = scope.placeholder || title;
+                    var field = scope.field = title.replace(/[^0-9a-zA-Z]/g, "").split(' ').join('') + (++uniqueId);
+                    scope.format = attributes.format || null;
+                    scope.precision = attributes.precision || null;
+                    scope.validate = attributes.validate || attributes.control;
+                    scope.minLength = attributes.minLength || 0;
+                    scope.maxLength = attributes.maxLength || Number.POSITIVE_INFINITY;
+                    scope.min = attributes.min || null;
+                    scope.max = attributes.max || null;
+                    scope.options = $parse(attributes.options)(scope) || {};
+                    scope.focus = false;
+                    scope.visible = false;
+                    scope.onChange = function(model) {
+                        $parse(attributes.onChange)(scope.$parent);
+                    };
+                    scope.onFilter = function(model) {
+                        $parse(attributes.onFilter)(scope.$parent);
+                    };
+                    scope.getType = function() {
+                        var type = 'text';
+                        switch (attributes.control) {
+                            case 'password':
+                                type = scope.visible ? 'text' : 'password';
+                                break;
+                            default:
+                                type = attributes.control;
+                        }
+                        return type;
+                    };
+                    scope.getClasses = function() {
+                        var form = $parse(scope.form)(scope.$parent);
+                        var field = $parse(scope.form + '.' + scope.field)(scope.$parent);
+                        return {
+                            'control-focus': scope.focus,
+                            'control-success': field.$valid,
+                            'control-error': field.$invalid && (form.$submitted || field.$touched),
+                            'control-empty': !field.$viewValue
+                        };
+                    };
+                    scope.getMessages = function() {
+                        var form = $parse(scope.form)(scope.$parent);
+                        var field = $parse(scope.form + '.' + scope.field)(scope.$parent);
+                        return (form.$submitted || field.$touched) && field.$error;
+                    };
+                    scope.toggleVisibility = function() {
+                        scope.visible = !scope.visible;
+                    };
+                },
+            },
+        };
+    }]);
+
+    app.directive('_control', ['$http', '$templateCache', '$compile', '$parse', function($http, $templateCache, $compile, $parse) {
+        function formatLabel(string, prepend, expression) {
+            string = string || '';
+            prepend = prepend || '';
+            var splitted = string.split(',');
+            if (splitted.length > 1) {
+                var formatted = splitted.shift();
+                angular.forEach(splitted, function(value, index) {
+                    if (expression) {
+                        formatted = formatted.split('{' + index + '}').join('\' + ' + prepend + value + ' + \'');
+                    } else {
+                        formatted = formatted.split('{' + index + '}').join(prepend + value);
+                    }
+                });
+                if (expression) {
+                    return '\'' + formatted + '\'';
+                } else {
+                    return formatted;
+                }
+            } else {
+                return prepend + string;
+            }
+        }
+        var uniqueId = 0;
+        return {
+            restrict: 'A',
+            templateUrl: function(element, attributes) {
+                var template = 'partials/framework/forms/text';
+                switch (attributes.control) {
+                    case 'select':
+                        template = 'partials/framework/forms/select';
                         break;
                 }
                 return template;
@@ -971,11 +1086,150 @@ var module = angular.module('framework', ['ng', 'ngSanitize', 'ngMessages']);
 /* global angular */
 
 (function() {
-    "use strict";
+    // "use strict";
 
     var app = angular.module('framework');
 
+
     app.factory('State', ['$timeout', function($timeout) {
+        var DELAY = 2000;
+
+        function State() {
+            this.isReady = false;
+            this.idle();
+        }
+        State.prototype = {
+            idle: idle,
+            busy: busy,
+            enabled: enabled,
+            error: error,
+            ready: ready,
+            success: success,
+            errorMessage: errorMessage,
+            submitClass: submitClass,
+            labels: labels,
+            classes: classes
+        };
+        return State;
+
+        function idle() {
+            this.isBusy = false;
+            this.isError = false;
+            this.isErroring = false;
+            this.isSuccess = false;
+            this.isSuccessing = false;
+            this.button = null;
+            this.errors = [];
+        }
+
+        function enabled() {
+            return !this.isBusy && !this.isErroring && !this.isSuccessing;
+        }
+
+        function busy() {
+            if (!this.isBusy) {
+                this.isBusy = true;
+                this.isError = false;
+                this.isErroring = false;
+                this.isSuccess = false;
+                this.isSuccessing = false;
+                this.errors = [];
+                // console.log('State.busy', this);
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        function success() {
+            this.isBusy = false;
+            this.isError = false;
+            this.isErroring = false;
+            this.isSuccess = true;
+            this.isSuccessing = true;
+            this.errors = [];
+            $timeout(function() {
+                this.ready();
+            }.bind(this), DELAY);
+        }
+
+        function error(error) {
+            this.isBusy = false;
+            this.isError = true;
+            this.isErroring = true;
+            this.isSuccess = false;
+            this.isSuccessing = false;
+            this.errors.push(error);
+            $timeout(function() {
+                this.ready();
+            }.bind(this), DELAY);
+        }
+
+        function ready() {
+            this.idle();
+            this.isReady = true;
+        }
+
+        function errorMessage() {
+            return this.isError ? this.errors[this.errors.length - 1] : null;
+        }
+
+        function submitClass() {
+            return {
+                busy: this.isBusy,
+                ready: this.isReady,
+                successing: this.isSuccessing,
+                success: this.isSuccess,
+                errorring: this.isErroring,
+                error: this.isError,
+            };
+        }
+
+        function labels(addons) {
+            var scope = this;
+            var defaults = {
+                ready: 'submit',
+                busy: 'sending',
+                error: 'error',
+                success: 'success',
+            };
+            if (addons) {
+                angular.extend(defaults, addons);
+            }
+            var label = defaults.ready;
+            if (this.isBusy) {
+                label = defaults.busy;
+            } else if (this.isSuccess) {
+                label = defaults.success;
+            } else if (this.isError) {
+                label = defaults.error;
+            }
+            return label;
+        }
+
+        function classes(addons) {
+            var scope = this,
+                classes = null;
+            classes = {
+                ready: scope.isReady,
+                busy: scope.isBusy,
+                successing: scope.isSuccessing,
+                success: scope.isSuccess,
+                errorring: scope.isErroring,
+                error: scope.isError,
+            };
+            if (addons) {
+                angular.forEach(addons, function(value, key) {
+                    classes[value] = classes[key];
+                });
+            }
+            // console.log('stateClass', classes);
+            return classes;
+        }
+
+    }]);
+
+    app.factory('_State', ['$timeout', function($timeout) {
         var DELAY = 2000;
 
         function State() {

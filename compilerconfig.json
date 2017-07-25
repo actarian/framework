@@ -1,1 +1,13 @@
-﻿[]
+﻿[{
+        "inputFile": "sass/bootstrap.scss",
+        "outputFile": "docs/css/bootstrap.css"
+    },
+    {
+        "inputFile": "sass/docs.scss",
+        "outputFile": "docs/css/docs.css"
+    },
+    {
+        "inputFile": "sass/framework.scss",
+        "outputFile": "docs/dist/framework.css"
+    }
+]

@@ -56,15 +56,16 @@ gulp.task('bundle:js', function() {
     });
     return merge(tasks);
 });
-gulp.task('bundle:templates', function() {
-    return gulp.src('./module/templates/**/*.html', {
+gulp.task('bundle:partials', function() {
+    return gulp.src('./partials/**/*.html', {
             base: '.'
         })
-        .pipe(rename({
-            dirname: 'partials/framework/', // flatten directory
-            extname: '',
+        .pipe(rename(function(path) {
+            path.dirname = path.dirname.split('partials/').join('partials/framework/');
+            // path.basename += "-partial";
+            path.extname = '';
         }))
-        .pipe(html2js('framework.templates.js', {
+        .pipe(html2js('framework.partials.js', {
             adapter: 'angular',
             base: '.',
             name: 'framework',
@@ -74,16 +75,16 @@ gulp.task('bundle:templates', function() {
             singleModule: true,
             useStrict: true,
         }))
-        .pipe(gulp.dest('./dist')) // save .js
+        .pipe(gulp.dest('./docs/dist')) // save .js
         .pipe(sourcemaps.init())
         .pipe(uglify()) // { preserveComments: 'license' }
         .pipe(rename({
             extname: '.min.js'
         }))
         .pipe(sourcemaps.write('./')) // save .map
-        .pipe(gulp.dest('./dist')); // save .min.js
+        .pipe(gulp.dest('./docs/dist')); // save .min.js
 });
-gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:templates']);
+gulp.task('bundle', ['bundle:css', 'bundle:js', 'bundle:partials']);
 
 // WEBSERVER
 gulp.task('webserver', function() {
@@ -111,7 +112,7 @@ gulp.task('watch', function(done) {
     getBundles('.js').forEach(function(bundle) {
         gulp.watch(bundle.inputFiles, ['bundle:js']).on('change', log);
     });
-    gulp.watch('./module/templates/**/*.html', ['bundle:templates']).on('change', log);
+    gulp.watch('./partials/**/*.html', ['bundle:partials']).on('change', log);
     gulp.watch('./compilerconfig.json', ['compile', 'bundle']).on('change', log);
     gulp.watch('./bundleconfig.json', ['bundle']).on('change', log);
     done();
