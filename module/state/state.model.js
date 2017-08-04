@@ -5,7 +5,6 @@
 
     var app = angular.module('framework');
 
-
     app.factory('State', ['$timeout', function($timeout) {
         var DELAY = 2000;
 

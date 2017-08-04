@@ -1090,7 +1090,6 @@ var module = angular.module('framework', ['ng', 'ngMessages']);
 
     var app = angular.module('framework');
 
-
     app.factory('State', ['$timeout', function($timeout) {
         var DELAY = 2000;
 
