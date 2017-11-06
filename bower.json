@@ -1,9 +1,9 @@
 {
-    "name": "repotable",
-    "description": "repotable",
-    "main": "repotable.js",
+    "name": "framework",
+    "description": "framework",
+    "main": "framework.js",
     "license": "ISC",
-    "homepage": "https://actarian.github.io/repotable/",
+    "homepage": "https://actarian.github.io/framework/",
     "private": true,
     "ignore": [
         "**/.*",

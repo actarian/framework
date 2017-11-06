@@ -1,40 +1,37 @@
 [{
-        "inputFiles": [
-            "module/framework.module.js",
-            "module/events/events.factory.js",
-            "module/extensions/ngclick.directive.js",
-            "module/filters/filters.js",
-            "module/forms/control.directive.js",
-            "module/forms/validate.directive.js",
-            "module/hash/hash.model.js",
-            "module/header/header.directive.js",
-            "module/router/router.service.js",
-            "module/state/state.model.js",
-            "module/storage/storage.service.js",
-            "module/services/services.js",
-            "module/utils/utils.service.js"
-        ],
-        "outputFileName": "docs/dist/framework.js",
-        "minify": {
-            "enabled": true
-        }
-    },
-    {
-        "inputFiles": [
-            "docs/css/docs.css"
-        ],
-        "outputFileName": "docs/css/docs.css",
-        "minify": {
-            "enabled": true
-        }
-    },
-    {
-        "inputFiles": [
-            "docs/dist/framework.css"
-        ],
-        "outputFileName": "docs/dist/framework.css",
-        "minify": {
-            "enabled": true
-        }
+    "inputFiles": [
+        "module/framework.module.js",
+        "module/events/events.factory.js",
+        "module/extensions/ngclick.directive.js",
+        "module/filters/filters.js",
+        "module/forms/control.directive.js",
+        "module/forms/validate.directive.js",
+        "module/hash/hash.model.js",
+        "module/header/header.directive.js",
+        "module/router/router.service.js",
+        "module/state/state.model.js",
+        "module/storage/storage.service.js",
+        "module/services/services.js",
+        "module/utils/utils.service.js"
+    ],
+    "outputFileName": "docs/dist/framework.js",
+    "minify": {
+        "enabled": true
     }
-]
+}, {
+    "inputFiles": [
+        "docs/css/docs.css"
+    ],
+    "outputFileName": "docs/css/docs.css",
+    "minify": {
+        "enabled": true
+    }
+}, {
+    "inputFiles": [
+        "docs/dist/framework.css"
+    ],
+    "outputFileName": "docs/dist/framework.css",
+    "minify": {
+        "enabled": true
+    }
+}]
